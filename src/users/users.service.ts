@@ -5,8 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { userquerydto } from './dto/user.query.dto';
 
- 
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -23,9 +24,33 @@ export class UsersService {
   }
 
 
-  //GET ALL 
+  // GET ALL 
   async findAll(): Promise<Users[]> {
     return this.usersRepository.find();
+  }
+
+  //Get
+  async getManyAndCount(query: userquerydto): Promise<{ data: Users[]; total: number, page: number, limit: number }> {
+    const page = parseInt(query.page || '1', 10);
+    const limit = parseInt(query.limit || '10', 10);
+    const skip = (page - 1) * limit;
+    const queryBuilder = this.usersRepository
+      .createQueryBuilder('users')
+    if (query.name) {
+      queryBuilder.andWhere('users.name = :name', { name: query.name });
+    }
+    if (query.phone) {
+      queryBuilder.andWhere('users.phone = :phone', { phone: query.phone });
+    }
+    if (query.sortBy && query.sort_order) {
+      queryBuilder.orderBy(`users.${query.sortBy}`, query.sort_order);
+    } else {
+      queryBuilder.orderBy('users.id', 'ASC');
+    }
+
+    queryBuilder.skip(skip).take(limit);
+    const [data, total] = await queryBuilder.getManyAndCount();
+    return { data, total, page, limit };
   }
 
   //GET  EMAIL
@@ -43,13 +68,10 @@ export class UsersService {
   //UPDATE
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<Users> {
     const user = await this.usersRepository.findOneBy({ id });
-
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found.`);
     }
-
     Object.assign(user, updateUserDto);
-
     return this.usersRepository.save(user);
   }
 

@@ -1,35 +1,90 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import { Status } from '../dto/status.enum';
+import { Users } from 'src/users/entities/user.entity';
 
 
 @Entity()
 export class Tasks {
   @PrimaryGeneratedColumn()
+  @ApiProperty({ example: "number" })
   id: number;
 
-  @Column({ length: 500 })
+  @Column()
+  @ApiProperty()
   title: string;
 
-  @Column({ length: 500 })
+  @Column()
+  @ApiProperty()
   description: string;
 
-  @Column({ length: 500 })
-  due_date: string;
+  @Column({ type: 'timestamp' })
+  @ApiProperty()
+  due_date: Date;
 
-  @Column({ length: 500 })
+  @Column()
+  @ApiProperty()
   priority: string;
 
-  @Column({ length: 500 })
+  @Column({
+    type: 'enum',
+    enum: Status,
+  })
+  @ApiProperty()
   status: string;
 
-  @Column({ length: 500 })
-  tags: string;
+  @Column('simple-array')
+  @ApiProperty()
+  tags: string[];
 
-  @Column({ length: 500 })
-  userId: string;
+  @Column()
+  @ApiProperty({ example: "number" })
+  userId: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  @ApiProperty({ example: 'date' })
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  @ApiProperty({ example: 'date' })
+  updated_at: Date;
+
+  @ManyToOne(() => Users, user => user.tasks)
+  @JoinColumn()
+  user: Users[];
+
+}
+
+
+export class tasksucess {
+    @ApiProperty({ example: "number" })
+    id: number;
+
+    @ApiProperty()
+    title: string;
+
+    @ApiProperty()
+    description: string;
+
+    @ApiProperty()
+    due_date: Date;
+
+    @ApiProperty()
+    priority: string;
+
+    @ApiProperty()
+    status: string;
+
+    @ApiProperty()
+    tags: string[];
+
+    @ApiProperty({ example: "number" })
+    userId: string;
+
+    @ApiProperty({ example: 'date' })
+    created_at: Date;
+
+    @ApiProperty({ example: 'date' })
+    updated_at: Date;
+
 }

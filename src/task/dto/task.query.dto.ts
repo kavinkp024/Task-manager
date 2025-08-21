@@ -1,37 +1,48 @@
-import { IsOptional, IsString, IsNumberString, IsIn } from 'class-validator';
+import { IsOptional, IsString, IsNumberString, IsInt, IsIn, IsDate } from 'class-validator';
+import { PaginationOptionsDto } from '../dto/pagination-options.dto';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
-export class taskquerydto {
+
+export class taskquerydto extends PaginationOptionsDto {
     @IsOptional()
+    @ApiPropertyOptional()
     @IsString()
     title?: string;
 
     @IsOptional()
+    @ApiPropertyOptional()
     @IsString()
     status?: string;
 
     @IsOptional()
-    @IsNumberString()
-    due_date?: string;
+    @ApiPropertyOptional()
+    @IsDate()
+    due_date?: Date;
 
     @IsOptional()
-    @IsNumberString()
+    @ApiPropertyOptional()
+    @IsString()
     priority?: string;
 
     @IsOptional()
-    @IsNumberString()
-    tags?: string;
+    @ApiPropertyOptional()
+    @IsString()
+    tags?: string[];
 
     @IsOptional()
-    @IsNumberString()
-    userId?: string;
+    @ApiPropertyOptional()
+    @IsInt()
+    userId?: number;
 
     @IsOptional()
+    @ApiPropertyOptional()
     @IsString()
     @IsIn(['due_date', 'priority'])
-    sortBy?: string;
+    sort_by?: string;
 
     @IsOptional()
+    @ApiPropertyOptional()
     @IsString()
     @IsIn(['ASC', 'DESC'])
-    sortOrder?: 'ASC' | 'DESC';
+    sort_order?: 'ASC' | 'DESC';
 }
