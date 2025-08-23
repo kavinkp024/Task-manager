@@ -13,4 +13,4 @@ import { Tasks } from 'src/task/entities/task.entity';
   providers: [UsersService, JwtService],
   exports: [UsersService],
 })
-export class UsersModule { } 
+export class UsersModule {} 

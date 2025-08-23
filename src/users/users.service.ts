@@ -13,7 +13,7 @@ export class UsersService {
   constructor(
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
-  ) { }
+  ) {}
 
 
   //POST

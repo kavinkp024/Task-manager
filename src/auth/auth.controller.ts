@@ -8,7 +8,7 @@ import { authsuccess } from './dto/auth.success.dto';
 @ApiTags('Login')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @Post('login')
   @ApiBody({ type: LoginUserDto })

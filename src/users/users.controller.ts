@@ -16,8 +16,7 @@ import { Internalservererror } from './dto/internal.server.error.dto';
 @ApiTags('Users')
 @Controller('users') 
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {
-  }
+  constructor(private readonly usersService: UsersService) {}
 
  
   @Post()

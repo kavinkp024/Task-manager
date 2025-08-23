@@ -25,5 +25,5 @@ import { ConfigModule } from '@nestjs/config';
   exports: [AuthGuard]
 })
 
-export class AuthModule { }
+export class AuthModule {}
 

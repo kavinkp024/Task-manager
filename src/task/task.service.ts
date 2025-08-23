@@ -12,7 +12,7 @@ export class TasksService {
     constructor(
         @InjectRepository(Tasks)
         private tasksRepository: Repository<Tasks>,
-    ) { }
+    ) {}
 
 
     //POST
