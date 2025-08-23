@@ -15,7 +15,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Create Login' })
   @ApiResponse({ status: 201, type: authsuccess })
   @ApiResponse({ status: 401, type: Unauthorized })
-  async signIn(@Body() loginDto: LoginUserDto) {
+  async signIn(
+    @Body() loginDto: LoginUserDto) {
     return this.authService.signIn(loginDto.email, loginDto.password);
   }
 } 

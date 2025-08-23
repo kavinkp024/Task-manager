@@ -3,7 +3,6 @@ import * as bcrypt from 'bcrypt';
 import { Tasks } from 'src/task/entities/task.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-
 @Entity()
 export class Users {
   @PrimaryGeneratedColumn()
@@ -14,13 +13,6 @@ export class Users {
 
   @Column()
   password: string;
-
-  @BeforeUpdate()
-  async hashPassword() {
-    if (this.password) {
-      this.password = await bcrypt.hash(this.password, 10);
-    }
-  }
 
   @Column()
   @ApiProperty()
@@ -34,6 +26,13 @@ export class Users {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+  }
 
   @OneToMany(() => Tasks, task => task.user)
   tasks: Tasks;
