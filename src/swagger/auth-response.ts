@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class authresponse {
+export class AuthResponse {
   @ApiProperty({ example: 'Invalid user' })
   message: string;
 

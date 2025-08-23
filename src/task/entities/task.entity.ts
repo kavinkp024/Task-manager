@@ -56,35 +56,3 @@ export class Tasks {
 }
 
 
-export class tasksucess {
-    @ApiProperty({ example: 'number' })
-    id: number;
-
-    @ApiProperty()
-    title: string;
-
-    @ApiProperty()
-    description: string;
-
-    @ApiProperty()
-    due_date: Date;
-
-    @ApiProperty()
-    priority: string;
-
-    @ApiProperty()
-    status: string;
-
-    @ApiProperty()
-    tags: string[];
-
-    @ApiProperty({ example: 'number' })
-    userId: string;
-
-    @ApiProperty({ example: 'date' })
-    created_at: Date;
-
-    @ApiProperty({ example: 'date' })
-    updated_at: Date;
-
-}

@@ -3,7 +3,7 @@ import { PaginationuserDto } from './pagination-user.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 
-export class userquerydto extends PaginationuserDto {
+export class UserQueryDto extends PaginationuserDto {
     @IsOptional()
     @ApiPropertyOptional()
     @IsString()

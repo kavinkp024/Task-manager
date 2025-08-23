@@ -4,7 +4,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tasks } from './entities/task.entity';
-import { taskquerydto } from './dto/task-query.dto'
+import { TaskQuerydto } from './dto/task-query.dto'
 
 
 @Injectable()
@@ -22,7 +22,7 @@ export class TasksService {
     }
 
     // get many
-    async getManyAndCount(query: taskquerydto): Promise<{ data: Tasks[]; total: number, page: number, limit: number }> {
+    async getManyAndCount(query: TaskQuerydto): Promise<{ data: Tasks[]; total: number, page: number, limit: number }> {
         const page = parseInt(query.page || '1', 10);
         const limit = parseInt(query.limit || '10', 10);
         const skip = (page - 1) * limit;

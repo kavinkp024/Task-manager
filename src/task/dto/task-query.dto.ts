@@ -3,7 +3,7 @@ import { PaginationOptionsDto } from './pagination-options.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 
-export class taskquerydto extends PaginationOptionsDto {
+export class TaskQuerydto extends PaginationOptionsDto {
     @IsOptional()
     @ApiPropertyOptional()
     @IsString()

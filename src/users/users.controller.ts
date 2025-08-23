@@ -2,16 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, P
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
-import { Users, user } from './entities/user.entity';
+import { Users } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
-import { userquerydto } from './dto/user-query.dto';
+import { UserQueryDto } from './dto/user-query.dto';
 import { ApiTags, ApiBody, ApiBearerAuth, ApiResponse, ApiOperation, ApiOkResponse, ApiUnauthorizedResponse, ApiExtraModels } from '@nestjs/swagger';
 import { Unauthorized } from '../swagger/unauth.response';
 import { Forbidden } from '../swagger/forbidden';
-import { NotFound } from '../swagger/not-found';
-import { badrequest } from '../swagger/bad.request';
-import { servererror } from '../swagger/internal-serve-error';
-import { usersresponse } from '../swagger/succes-response-user';
+import { NotFound } from '../swagger/notfound';
+import { BadRequest } from '../swagger/bad.request';
+import { Internalservererror } from '../swagger/internal-server-error';
+import { UsersResponse } from '../swagger/succes-response-user';
+import { UserList } from '../swagger/userlist-response';
 
 @ApiTags('Users')
 @Controller('users') 
@@ -22,32 +23,27 @@ export class UsersController {
   @Post()
   @ApiBody({ type: CreateUserDto })
   @ApiOperation({ summary: 'Create user' })
-  @ApiResponse({ status: 201, type: user })
-  @ApiResponse({ status: 400, type: badrequest })
-  @ApiResponse({ status: 500, type: servererror })
+  @ApiResponse({ status: 201, type: UserList })
+  @ApiResponse({ status: 400, type: BadRequest })
+  @ApiResponse({ status: 500, type: Internalservererror })
   async create(
     @Body(new ValidationPipe({ transform: true })) createUserDto: CreateUserDto): Promise<Users> {
     try {
       return this.usersService.create(createUserDto);
-    } catch (error) {
-      throw new HttpException({
-        status: HttpStatus.FORBIDDEN,
-        error: 'This is a custom message',
-      }, HttpStatus.FORBIDDEN, {
-        cause: error
-      });
+    }catch (error) {
+     throw new NotFoundException('fill all user information.')
     }
   }
 
   @Get()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get Users ' })
-  @ApiResponse({ status: 200, type:usersresponse })
+  @ApiResponse({ status: 200, type:UsersResponse })
   @ApiResponse({ status: 401, type: Unauthorized })
-  @ApiResponse({ status: 500, type: servererror })
+  @ApiResponse({ status: 500, type: Internalservererror })
   @ApiBearerAuth('access-token')
   async findAll(
-    @Query() query: userquerydto): Promise<{ data: Users[] }> {
+    @Query() query: UpdateUserDto): Promise<{ data: Users[] }> {
     return this.usersService.getManyAndCount(query);
   }
 
@@ -55,7 +51,7 @@ export class UsersController {
   @Get(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get user by ID' })
-  @ApiResponse({ status: 200, type: user })
+  @ApiResponse({ status: 200, type: UserList })
   @ApiResponse({ status: 401, type: Unauthorized })
   @ApiBearerAuth('access-token')
   async findOneById(
@@ -67,12 +63,7 @@ export class UsersController {
       }
       return user;
     } catch (error) {
-      throw new HttpException({
-        status: HttpStatus.FORBIDDEN,
-        error: 'The expected ID is not find in database.',
-      }, HttpStatus.FORBIDDEN, {
-        cause: error
-      });
+     throw new NotFoundException('Give some Valid user Id.')
     }
   }
 
@@ -80,8 +71,8 @@ export class UsersController {
   @Patch(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'user update' })
-  @ApiResponse({ status: 200, type: user })
-  @ApiResponse({ status: 404, type: NotFound })
+  @ApiResponse({ status: 200, type: UserList })
+  @ApiResponse({ status: 404, type: NotFound})
   @ApiResponse({ status: 401, type: Unauthorized })
   @ApiBearerAuth('access-token')
   async patchUser(
@@ -91,12 +82,7 @@ export class UsersController {
     try {
       return this.usersService.updateUser(id, updateUserDto);
     } catch (error) {
-      throw new HttpException({
-        status: HttpStatus.FORBIDDEN,
-        error: 'This is a custom message.',
-      }, HttpStatus.FORBIDDEN, {
-        cause: error
-      });
+     throw new NotFoundException('The given user Id is Invalid.')
     }
   }
 
@@ -113,12 +99,7 @@ export class UsersController {
     try {
       await this.usersService.deleteUser(id);
     } catch (error) {
-      throw new HttpException({
-        status: HttpStatus.FORBIDDEN,
-        error: 'This is a custom message',
-      }, HttpStatus.FORBIDDEN, {
-        cause: error
-      });
+     throw new NotFoundException('Give Id is Invalid.')
     }
   }
 }

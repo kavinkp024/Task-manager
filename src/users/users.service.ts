@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { userquerydto } from './dto/user-query.dto';
+import { UserQueryDto } from './dto/user-query.dto';
 
 
 @Injectable()
@@ -30,7 +30,7 @@ export class UsersService {
   }
 
   //Get
-  async getManyAndCount(query: userquerydto): Promise<{ data: Users[]; total: number, page: number, limit: number }> {
+  async getManyAndCount(query: UserQueryDto): Promise<{ data: Users[]; total: number, page: number, limit: number }> {
     const page = parseInt(query.page || '1', 10);
     const limit = parseInt(query.limit || '10', 10);
     const skip = (page - 1) * limit;

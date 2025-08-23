@@ -22,3 +22,6 @@ export class UserList {
     @ApiProperty({ example: 'date' })
     updated_at: Date;
 }
+
+
+

@@ -2,16 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, P
 import { TasksService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { Tasks, tasksucess } from './entities/task.entity';
-import { taskquerydto } from './dto/task-query.dto'
+import { Tasks } from './entities/task.entity';
+import { TaskQuerydto } from './dto/task-query.dto'
 import { AuthGuard } from '../auth/auth.guard';
 import { ApiTags, ApiBody, ApiBearerAuth, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { Forbidden } from '../swagger/forbidden';
-import { badrequest } from '../swagger/bad.request';
-import { taskresponse } from '../swagger/success.response.task';
+import { BadRequest } from '../swagger/bad.request';
+import { TaskResponse } from '../swagger/success.response.task';
 import { Unauthorized } from '../swagger/unauth.response';
-import { NotFound } from '../swagger/not-found';
-import { servererror } from '../swagger/internal-serve-error';
+import { NotFound } from '../swagger/notfound';
+import { Internalservererror } from '../swagger/internal-server-error';
+import { TaskList } from 'src/swagger/tasklist-response';
 
 @ApiTags('Tasks')
 @Controller('tasks')
@@ -22,9 +23,9 @@ export class TasksController {
     @Post()
     @ApiBody({ type: CreateTaskDto })
     @ApiOperation({ summary: 'Create Task' })
-    @ApiResponse({ status: 201, type: tasksucess })
-    @ApiResponse({ status: 400, type: badrequest })
-    @ApiResponse({ status: 500, type: servererror })
+    @ApiResponse({ status: 201, type: TaskList })
+    @ApiResponse({ status: 400, type: BadRequest })
+    @ApiResponse({ status: 500, type: Internalservererror })
     async create(
         @Body(new ValidationPipe()) createTaskDto: CreateTaskDto): Promise<Tasks> {
         try {
@@ -43,11 +44,11 @@ export class TasksController {
     @Get()
     @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Get Tasks ' })
-    @ApiResponse({ status: 200, type: taskresponse })
+    @ApiResponse({ status: 200, type: TaskResponse })
     @ApiResponse({ status: 401, type: Unauthorized })
-    @ApiResponse({ status: 500, type: servererror })
+    @ApiResponse({ status: 500, type: Internalservererror })
     @ApiBearerAuth('access-token')
-    async getManyAndCount(@Query() query: taskquerydto): Promise<{ data: Tasks[]; total: number }> {
+    async getManyAndCount(@Query() query: TaskQuerydto): Promise<{ data: Tasks[]; total: number }> {
         return this.tasksService.getManyAndCount(query);
     }
 
@@ -55,7 +56,7 @@ export class TasksController {
     @Get(':id')
     @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Get Task by ID' })
-    @ApiResponse({ status: 200, type: tasksucess })
+    @ApiResponse({ status: 200, type: TaskList })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async findOneById(
@@ -80,8 +81,8 @@ export class TasksController {
     @Patch(':id')
     @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Task update' })
-    @ApiResponse({ status: 200, type: tasksucess })
-    @ApiResponse({ status: 404, type: NotFound })
+    @ApiResponse({ status: 200, type: TaskList })
+    @ApiResponse({ status: 404, type: NotFound})
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async patchTask(
