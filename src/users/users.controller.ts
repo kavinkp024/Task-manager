@@ -14,12 +14,11 @@ import { badrequest } from './dto/bad.request.dto';
 import { Internalservererror } from './dto/internal.server.error.dto';
 
 @ApiTags('Users')
-@Controller('users')
+@Controller('users') 
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {
-  }
+  constructor(private readonly usersService: UsersService) {}
 
-
+ 
   @Post()
   @ApiBody({ type: CreateUserDto })
   @ApiOperation({ summary: 'Create user' })
@@ -27,7 +26,7 @@ export class UsersController {
   @ApiResponse({ status: 400, type: badrequest })
   @ApiResponse({ status: 500, type: Internalservererror })
   async create(
-    @Body(new ValidationPipe()) createUserDto: CreateUserDto): Promise<Users> {
+    @Body(new ValidationPipe({ transform: true })) createUserDto: CreateUserDto): Promise<Users> {
     try {
       return this.usersService.create(createUserDto);
     } catch (error) {
@@ -47,7 +46,8 @@ export class UsersController {
   @ApiResponse({ status: 401, type: UnauthorizedResponse })
   @ApiResponse({ status: 500, type: Internalservererror })
   @ApiBearerAuth('access-token')
-  async findAll(@Query() query: userquerydto): Promise<{ data: Users[] }> {
+  async findAll(
+    @Query() query: userquerydto): Promise<{ data: Users[] }> {
     return this.usersService.getManyAndCount(query);
   }
 
@@ -109,7 +109,8 @@ export class UsersController {
   @ApiResponse({ status: 403, type: Forbidden })
   @ApiResponse({ status: 401, type: UnauthorizedResponse })
   @ApiBearerAuth('access-token')
-  async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async deleteUser(
+    @Param('id', ParseIntPipe) id: number): Promise<void> {
     try {
       await this.usersService.deleteUser(id);
     } catch (error) {

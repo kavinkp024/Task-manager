@@ -10,25 +10,25 @@ import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) { }
+  constructor(private jwtService: JwtService,
+   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('you must enter token value.');
     }
     try {
       const payload = await this.jwtService.verifyAsync(
         token,
         {
-          secret: 'kavinkavin'
+          secret: process.env.YOUR_SECRET_KEY
         }
-      );
-
+      ); 
       request['user'] = payload;
     } catch {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('The given token is Invalid.');
     }
     return true;
   }
@@ -38,3 +38,4 @@ export class AuthGuard implements CanActivate {
     return type === 'Bearer' ? token : undefined;
   }
 }
+

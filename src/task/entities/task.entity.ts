@@ -57,7 +57,7 @@ export class Tasks {
 
 
 export class tasksucess {
-    @ApiProperty({ example: "number" })
+    @ApiProperty({ example: 'number' })
     id: number;
 
     @ApiProperty()
@@ -78,7 +78,7 @@ export class tasksucess {
     @ApiProperty()
     tags: string[];
 
-    @ApiProperty({ example: "number" })
+    @ApiProperty({ example: 'number' })
     userId: string;
 
     @ApiProperty({ example: 'date' })

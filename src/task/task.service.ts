@@ -12,7 +12,7 @@ export class TasksService {
     constructor(
         @InjectRepository(Tasks)
         private tasksRepository: Repository<Tasks>,
-    ) { }
+    ) {}
 
 
     //POST
@@ -61,16 +61,6 @@ export class TasksService {
     }
 
 
-    //GET GROUPING
-    async getTasksCountBystatus(): Promise<any[]> {
-        return this.tasksRepository
-            .createQueryBuilder('Tasks')
-            .select('Tasks.status', 'status')
-            .addSelect('COUNT(Tasks.id)', 'TasksCount')
-            .groupBy('Tasks.status')
-            .orderBy('TasksCount', 'DESC')
-            .getRawMany();
-    }
 
     // GET BY ID
     async findOneById(id: number): Promise<Tasks | null | undefined> {

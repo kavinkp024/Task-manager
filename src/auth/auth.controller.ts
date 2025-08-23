@@ -8,14 +8,15 @@ import { authsuccess } from './dto/auth.success.dto';
 @ApiTags('Login')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @Post('login')
   @ApiBody({ type: LoginUserDto })
   @ApiOperation({ summary: 'Create Login' })
   @ApiResponse({ status: 201, type: authsuccess })
   @ApiResponse({ status: 401, type: Unauthorized })
-  async signIn(@Body() loginDto: LoginUserDto) {
+  async signIn(
+    @Body() loginDto: LoginUserDto) {
     return this.authService.signIn(loginDto.email, loginDto.password);
   }
 } 

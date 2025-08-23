@@ -16,8 +16,7 @@ import { taskresponse } from './dto/success.response.task.dto';
 @ApiTags('Tasks')
 @Controller('tasks')
 export class TasksController {
-    constructor(private readonly tasksService: TasksService) {
-    }
+    constructor(private readonly tasksService: TasksService) {}
 
 
     @Post()
