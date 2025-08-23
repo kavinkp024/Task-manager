@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { list } from './userid.response.dto';
+import { List } from './userid-response';
 
 export class TaskList {
       @ApiProperty({ example: 'number' })
@@ -23,8 +23,8 @@ export class TaskList {
       @ApiProperty()
       tags: string[];
 
-      @ApiProperty({ example: list })
-      userId: list;
+      @ApiProperty({ example: List })
+      userId: List;
 
       @ApiProperty({ example: 'date' })
       created_at: Date;

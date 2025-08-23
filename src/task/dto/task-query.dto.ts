@@ -1,9 +1,9 @@
 import { IsOptional, IsString, IsNumberString, IsInt, IsIn, IsDate } from 'class-validator';
-import { PaginationOptionsDto } from '../dto/pagination-options.dto';
+import { PaginationOptionsDto } from './pagination-options.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 
-export class taskquerydto extends PaginationOptionsDto {
+export class TaskQuerydto extends PaginationOptionsDto {
     @IsOptional()
     @ApiPropertyOptional()
     @IsString()

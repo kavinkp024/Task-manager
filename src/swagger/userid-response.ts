@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 
-export class list {
+export class List {
     @ApiProperty({ example: 'number'})
     id: number
 

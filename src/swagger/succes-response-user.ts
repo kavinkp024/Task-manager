@@ -1,8 +1,8 @@
-import { MetaDto } from './paginated-response.dto';
-import { UserList } from './userlist.response.dto';
+import { MetaDto } from '../pagination/pagination-response';
+import { UserList } from '../swagger/userlist-response';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class successresponse {
+export class UsersResponse {
     @ApiProperty({
         type: [UserList]
     })

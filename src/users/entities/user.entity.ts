@@ -40,31 +40,3 @@ export class Users {
 }    
 
 
-
-
-
-
-
-export class user {
-  @ApiProperty({ example: "number" })
-  id: number;
-
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  password: string;
-
-  @ApiProperty()
-  email: string;
-
-  @ApiProperty({ example: "number" })
-  phone: string;
-
-  @ApiProperty({ example: 'date' })
-  created_at: Date;
-
-  @ApiProperty({ example: 'date' })
-  updated_at: Date;
-
- }    
