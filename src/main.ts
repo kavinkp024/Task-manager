@@ -13,11 +13,11 @@ async function bootstrap() {
     .addBearerAuth(
       {
         type: 'http',
-        scheme: 'bearer',  
+        scheme: 'bearer',
         bearerFormat: 'JWT',
         name: 'JWT',
-        description: 'Enter JWT token',     
-        in: 'header', 
+        description: 'Enter JWT token',
+        in: 'header',
       },
       'access-token'
     )
@@ -25,6 +25,6 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('manager', app, documentFactory);
 
-  await app.listen(process.env.PORT || 3000);}
+  await app.listen(process.env.PORT || 3000);
+}
 bootstrap();
- 

@@ -1,5 +1,5 @@
 import { IsString, IsEmail, IsOptional, IsIn } from 'class-validator';
-import { PaginationuserDto } from '../dto/pagination-user.dto';
+import { PaginationuserDto } from './pagination-user.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 

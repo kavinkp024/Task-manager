@@ -10,10 +10,3 @@ export class Forbidden {
 
 
 
-export class ForbiddenId {
-    @ApiProperty({ example: '403' })
-    status: number;
-
-    @ApiProperty({ example: 'The expected user ID is not find in database.' })
-    error: string;
-}

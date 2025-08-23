@@ -4,14 +4,14 @@ import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
 import { Users, user } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
-import { userquerydto } from './dto/user.query.dto';
+import { userquerydto } from './dto/user-query.dto';
 import { ApiTags, ApiBody, ApiBearerAuth, ApiResponse, ApiOperation, ApiOkResponse, ApiUnauthorizedResponse, ApiExtraModels } from '@nestjs/swagger';
-import { UnauthorizedResponse } from './dto/unauth.response.dto';
-import { successresponse } from './dto/success.response.dto';
-import { Forbidden, ForbiddenId } from './dto/forbidden.response.dto';
-import { NotFound } from './dto/not.found.response.dto';
-import { badrequest } from './dto/bad.request.dto';
-import { Internalservererror } from './dto/internal.server.error.dto';
+import { Unauthorized } from '../swagger/unauth.response';
+import { Forbidden } from '../swagger/forbidden';
+import { NotFound } from '../swagger/not-found';
+import { badrequest } from '../swagger/bad.request';
+import { servererror } from '../swagger/internal-serve-error';
+import { usersresponse } from '../swagger/succes-response-user';
 
 @ApiTags('Users')
 @Controller('users') 
@@ -24,7 +24,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Create user' })
   @ApiResponse({ status: 201, type: user })
   @ApiResponse({ status: 400, type: badrequest })
-  @ApiResponse({ status: 500, type: Internalservererror })
+  @ApiResponse({ status: 500, type: servererror })
   async create(
     @Body(new ValidationPipe({ transform: true })) createUserDto: CreateUserDto): Promise<Users> {
     try {
@@ -42,9 +42,9 @@ export class UsersController {
   @Get()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get Users ' })
-  @ApiResponse({ status: 200, type: successresponse })
-  @ApiResponse({ status: 401, type: UnauthorizedResponse })
-  @ApiResponse({ status: 500, type: Internalservererror })
+  @ApiResponse({ status: 200, type:usersresponse })
+  @ApiResponse({ status: 401, type: Unauthorized })
+  @ApiResponse({ status: 500, type: servererror })
   @ApiBearerAuth('access-token')
   async findAll(
     @Query() query: userquerydto): Promise<{ data: Users[] }> {
@@ -56,8 +56,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({ status: 200, type: user })
-  @ApiResponse({ status: 403, type: ForbiddenId })
-  @ApiResponse({ status: 401, type: UnauthorizedResponse })
+  @ApiResponse({ status: 401, type: Unauthorized })
   @ApiBearerAuth('access-token')
   async findOneById(
     @Param('id', ParseIntPipe) id: number): Promise<Users> {
@@ -70,7 +69,7 @@ export class UsersController {
     } catch (error) {
       throw new HttpException({
         status: HttpStatus.FORBIDDEN,
-        error: 'The expected user ID is not find in database.',
+        error: 'The expected ID is not find in database.',
       }, HttpStatus.FORBIDDEN, {
         cause: error
       });
@@ -83,7 +82,7 @@ export class UsersController {
   @ApiOperation({ summary: 'user update' })
   @ApiResponse({ status: 200, type: user })
   @ApiResponse({ status: 404, type: NotFound })
-  @ApiResponse({ status: 401, type: UnauthorizedResponse })
+  @ApiResponse({ status: 401, type: Unauthorized })
   @ApiBearerAuth('access-token')
   async patchUser(
     @Param('id', ParseIntPipe) id: number,
@@ -107,7 +106,7 @@ export class UsersController {
   @ApiOperation({ summary: 'user delete' })
   @ApiResponse({ status: 200 })
   @ApiResponse({ status: 403, type: Forbidden })
-  @ApiResponse({ status: 401, type: UnauthorizedResponse })
+  @ApiResponse({ status: 401, type: Unauthorized })
   @ApiBearerAuth('access-token')
   async deleteUser(
     @Param('id', ParseIntPipe) id: number): Promise<void> {

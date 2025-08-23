@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class taskInternalservererror {
+export class servererror {
     @ApiProperty({ example: 500 })
     statusCode: number;
 

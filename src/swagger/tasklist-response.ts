@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { list } from './userid.response.dto';
+import { list } from './userid-response';
 
 export class TaskList {
       @ApiProperty({ example: 'number' })

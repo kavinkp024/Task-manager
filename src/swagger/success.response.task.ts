@@ -1,6 +1,6 @@
-import { MetaDtotask } from './pagination.response.task.dto';
-import { TaskList } from './tasklist.response.dto';
+import { TaskList } from './tasklist-response';
 import { ApiProperty } from '@nestjs/swagger';
+import { MetaDto } from 'src/pagination/pagination-response';
 
 export class taskresponse {
     @ApiProperty({
@@ -9,7 +9,7 @@ export class taskresponse {
     data: TaskList[];
 
     @ApiProperty()
-    meta: MetaDtotask;
+    meta: MetaDto;
 
 }
 

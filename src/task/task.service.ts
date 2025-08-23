@@ -4,7 +4,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tasks } from './entities/task.entity';
-import { taskquerydto } from './dto/task.query.dto'
+import { taskquerydto } from './dto/task-query.dto'
 
 
 @Injectable()
