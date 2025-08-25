@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, Query, HttpException, HttpStatus, ValidationPipe, UseGuards, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, Query, HttpException, HttpStatus, ValidationPipe, UseGuards, ServiceUnavailableException, ConflictException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
@@ -15,11 +15,11 @@ import { UsersResponse } from '../swagger/succes-response-user';
 import { UserList } from '../swagger/userlist-response';
 
 @ApiTags('Users')
-@Controller('users') 
+@Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
- 
+
   @Post()
   @ApiBody({ type: CreateUserDto })
   @ApiOperation({ summary: 'Create user' })
@@ -30,21 +30,25 @@ export class UsersController {
     @Body(ValidationPipe) createUserDto: CreateUserDto): Promise<Users> {
     try {
       return this.usersService.create(createUserDto);
-    }catch (error) {
-     throw error('Create User details.')
+    } catch (error) {
+      throw new ConflictException('Task already created.')
     }
   }
 
   @Get()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get Users ' })
-  @ApiResponse({ status: 200, type:UsersResponse })
+  @ApiResponse({ status: 200, type: UsersResponse })
   @ApiResponse({ status: 401, type: Unauthorized })
   @ApiResponse({ status: 500, type: Internalservererror })
   @ApiBearerAuth('access-token')
   async findAll(
     @Query() query: UserQueryDto): Promise<{ data: Users[] }> {
-    return this.usersService.getManyAndCount(query);
+    try {
+      return this.usersService.getManyAndCount(query);
+    } catch (error) {
+      throw new NotFoundException('The task table is empty.')
+    }
   }
 
 
@@ -56,11 +60,15 @@ export class UsersController {
   @ApiBearerAuth('access-token')
   async findOneById(
     @Param('id', ParseIntPipe) id: number): Promise<Users> {
+    try {
       const user = await this.usersService.findOneById(id);
       if (!user) {
         throw new NotFoundException(`User with ID ${id} not found`);
       }
       return user;
+    } catch {
+      throw new ServiceUnavailableException('The server is unavilable.');
+    }
   }
 
 
@@ -68,7 +76,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'user update' })
   @ApiResponse({ status: 200, type: UserList })
-  @ApiResponse({ status: 404, type: NotFound})
+  @ApiResponse({ status: 404, type: NotFound })
   @ApiResponse({ status: 401, type: Unauthorized })
   @ApiBearerAuth('access-token')
   async patchUser(
@@ -78,7 +86,7 @@ export class UsersController {
     try {
       return this.usersService.updateUser(id, updateUserDto);
     } catch (error) {
-     throw error('Given Id is Invalid.')
+      throw new NotFoundException('Given Id is Invalid.');
     }
   }
 
@@ -95,7 +103,7 @@ export class UsersController {
     try {
       await this.usersService.deleteUser(id);
     } catch (error) {
-     throw error('Given Id is Invalid.')
+      throw new NotFoundException('Given Id is Invalid.');
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, HttpException, HttpStatus, ValidationPipe, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, ServiceUnavailableException, ValidationPipe, UseGuards, Query, ConflictException } from '@nestjs/common';
 import { TasksService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -31,45 +31,49 @@ export class TasksController {
         try {
             return this.tasksService.create(createTaskDto);
         } catch (error) {
-            throw error('Create Task details.')
+            throw new ConflictException('Task already created.')
         }
     }
 
 
     @Get()
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Get Tasks ' })
     @ApiResponse({ status: 200, type: TaskResponse })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiResponse({ status: 500, type: Internalservererror })
     @ApiBearerAuth('access-token')
     async getManyAndCount(@Query() query: TaskQuerydto): Promise<{ data: Tasks[]; total: number }> {
-        try{
-        return this.tasksService.getManyAndCount(query);
-        }catch (error) {
-            throw error('The table is empty.')
+        try {
+            return this.tasksService.getManyAndCount(query);
+        } catch (error) {
+            throw new NotFoundException('The task table is empty.')
         }
     }
 
 
     @Get(':id')
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Get Task by ID' })
     @ApiResponse({ status: 200, type: TaskList })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async findOneById(
         @Param('id', ParseIntPipe) id: number): Promise<Tasks> {
+        try {
             const task = await this.tasksService.findOneById(id);
             if (!task) {
                 throw new NotFoundException(`task with ID ${id} not found`);
             }
             return task;
+        } catch (error) {
+            throw new ServiceUnavailableException('The server is unavilable.');
+        }
     }
 
 
     @Patch(':id')
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Task update' })
     @ApiResponse({ status: 200, type: TaskList })
     @ApiResponse({ status: 404, type: NotFound })
@@ -82,7 +86,7 @@ export class TasksController {
         try {
             return this.tasksService.updateTask(id, updateTaskDto);
         } catch (error) {
-            throw error('Given Id is Invalid.')
+            throw new NotFoundException('Given Id is Invalid.');
         }
     }
 
@@ -98,7 +102,7 @@ export class TasksController {
         try {
             await this.tasksService.deleteTask(id);
         } catch (error) {
-            throw error('Given Id is Invalid.')
+            throw new NotFoundException('Given Id is Invalid.');
         }
     }
 }

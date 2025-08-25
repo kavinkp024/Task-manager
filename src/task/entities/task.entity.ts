@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Users } from 'src/users/entities/user.entity';
-
+import { Priority, Status } from '../enum/enum-task';
 
 @Entity()
 export class Tasks {
@@ -21,19 +21,24 @@ export class Tasks {
   @ApiProperty()
   due_date: Date;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: Priority})
   @ApiProperty()
-  priority: string;
+  priority:Priority;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: Status})
   @ApiProperty()
-  status: string;
+  status: Status;
 
-  @Column('simple-array')
+  @Column('simple-array') 
   @ApiProperty()
   tags: string[];
 
   @Column()
+  
   @ApiProperty({ example: "number" })
   userId: number;
 

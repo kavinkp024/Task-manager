@@ -1,5 +1,6 @@
 import { IsString, IsEnum, IsInt, IsArray, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Status,Priority } from '../enum/enum-task';
 
 
 export class CreateTaskDto {
@@ -12,21 +13,17 @@ export class CreateTaskDto {
   description: string;
 
   @IsDateString()
-  @ApiProperty()
+  @ApiProperty() 
   due_date: Date;
 
-  @IsEnum(["low","medium","high"],{
-    message:'Valid priority required'
-  })
+  @IsEnum(Priority)
   @ApiProperty()
-  priority: "low" | "medium" | "high";
+  priority:Priority;
 
 
-  @IsEnum(["pending","in_progress"," completed"],{
-    message:'Valid status required'
-  })
+  @IsEnum(Status)
   @ApiProperty()
-  status: "pending" |" in_progress" | "completed";
+  status:Status;
 
   @ApiProperty()
   @IsArray()

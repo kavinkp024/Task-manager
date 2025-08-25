@@ -17,7 +17,7 @@ export class TasksService {
 
     //POST
     async create(createTaskDto: CreateTaskDto): Promise<Tasks> {
-        const newtask = this.tasksRepository.create({ ...createTaskDto });
+        const newtask = this.tasksRepository.create(createTaskDto );
         return this.tasksRepository.save(newtask);
     }
 
