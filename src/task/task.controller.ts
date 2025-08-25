@@ -37,7 +37,7 @@ export class TasksController {
 
 
     @Get()
-    // @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Get Tasks ' })
     @ApiResponse({ status: 200, type: TaskResponse })
     @ApiResponse({ status: 401, type: Unauthorized })
@@ -53,7 +53,7 @@ export class TasksController {
 
 
     @Get(':id')
-    // @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Get Task by ID' })
     @ApiResponse({ status: 200, type: TaskList })
     @ApiResponse({ status: 401, type: Unauthorized })
@@ -73,7 +73,7 @@ export class TasksController {
 
 
     @Patch(':id')
-    // @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Task update' })
     @ApiResponse({ status: 200, type: TaskList })
     @ApiResponse({ status: 404, type: NotFound })
