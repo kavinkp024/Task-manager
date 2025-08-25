@@ -17,7 +17,7 @@ import { TaskList } from 'src/swagger/tasklist-response';
 @ApiTags('Tasks')
 @Controller('tasks')
 export class TasksController {
-    constructor(private readonly tasksService: TasksService) {}
+    constructor(private readonly tasksService: TasksService) { }
 
 
     @Post()
@@ -27,16 +27,11 @@ export class TasksController {
     @ApiResponse({ status: 400, type: BadRequest })
     @ApiResponse({ status: 500, type: Internalservererror })
     async create(
-        @Body(new ValidationPipe()) createTaskDto: CreateTaskDto): Promise<Tasks> {
+        @Body(ValidationPipe) createTaskDto: CreateTaskDto): Promise<Tasks> {
         try {
             return this.tasksService.create(createTaskDto);
         } catch (error) {
-             throw new HttpException({
-                status: HttpStatus.FORBIDDEN,
-                error: 'This is a custom message',
-            }, HttpStatus.FORBIDDEN, {
-                cause: error
-            });
+            throw new NotFoundException('Create Task details.')
         }
     }
 
@@ -49,7 +44,11 @@ export class TasksController {
     @ApiResponse({ status: 500, type: Internalservererror })
     @ApiBearerAuth('access-token')
     async getManyAndCount(@Query() query: TaskQuerydto): Promise<{ data: Tasks[]; total: number }> {
+        try{
         return this.tasksService.getManyAndCount(query);
+        }catch (error) {
+            throw error('The table is empty.')
+        }
     }
 
 
@@ -61,20 +60,11 @@ export class TasksController {
     @ApiBearerAuth('access-token')
     async findOneById(
         @Param('id', ParseIntPipe) id: number): Promise<Tasks> {
-        try {
             const task = await this.tasksService.findOneById(id);
             if (!task) {
                 throw new NotFoundException(`task with ID ${id} not found`);
             }
             return task;
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.NOT_FOUND,
-                error: 'The expected ID is not find in database.',
-            }, HttpStatus.FORBIDDEN, {
-                cause: error
-            });
-        }
     }
 
 
@@ -82,22 +72,17 @@ export class TasksController {
     @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Task update' })
     @ApiResponse({ status: 200, type: TaskList })
-    @ApiResponse({ status: 404, type: NotFound})
+    @ApiResponse({ status: 404, type: NotFound })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async patchTask(
         @Param('id', ParseIntPipe) id: number,
-        @Body() updateTaskDto: UpdateTaskDto,
+        @Body(ValidationPipe) updateTaskDto: UpdateTaskDto,
     ) {
         try {
             return this.tasksService.updateTask(id, updateTaskDto);
         } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.FORBIDDEN,
-                error: 'This is a custom message.',
-            }, HttpStatus.FORBIDDEN, {
-                cause: error
-            });
+            throw error('Given Id is Invalid.')
         }
     }
 
@@ -113,12 +98,7 @@ export class TasksController {
         try {
             await this.tasksService.deleteTask(id);
         } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.FORBIDDEN,
-                error: 'This is a custom message',
-            }, HttpStatus.FORBIDDEN, {
-                cause: error
-            });
+            throw error('Given Id is Invalid.')
         }
     }
 }

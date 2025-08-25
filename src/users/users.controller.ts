@@ -27,11 +27,11 @@ export class UsersController {
   @ApiResponse({ status: 400, type: BadRequest })
   @ApiResponse({ status: 500, type: Internalservererror })
   async create(
-    @Body(new ValidationPipe({ transform: true })) createUserDto: CreateUserDto): Promise<Users> {
+    @Body(ValidationPipe) createUserDto: CreateUserDto): Promise<Users> {
     try {
       return this.usersService.create(createUserDto);
     }catch (error) {
-     throw new NotFoundException('fill all user information.')
+     throw error('Create User details.')
     }
   }
 
@@ -43,7 +43,7 @@ export class UsersController {
   @ApiResponse({ status: 500, type: Internalservererror })
   @ApiBearerAuth('access-token')
   async findAll(
-    @Query() query: UpdateUserDto): Promise<{ data: Users[] }> {
+    @Query() query: UserQueryDto): Promise<{ data: Users[] }> {
     return this.usersService.getManyAndCount(query);
   }
 
@@ -56,15 +56,11 @@ export class UsersController {
   @ApiBearerAuth('access-token')
   async findOneById(
     @Param('id', ParseIntPipe) id: number): Promise<Users> {
-    try {
       const user = await this.usersService.findOneById(id);
       if (!user) {
         throw new NotFoundException(`User with ID ${id} not found`);
       }
       return user;
-    } catch (error) {
-     throw new NotFoundException('Give some Valid user Id.')
-    }
   }
 
 
@@ -77,12 +73,12 @@ export class UsersController {
   @ApiBearerAuth('access-token')
   async patchUser(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
   ) {
     try {
       return this.usersService.updateUser(id, updateUserDto);
     } catch (error) {
-     throw new NotFoundException('The given user Id is Invalid.')
+     throw error('Given Id is Invalid.')
     }
   }
 
@@ -99,7 +95,7 @@ export class UsersController {
     try {
       await this.usersService.deleteUser(id);
     } catch (error) {
-     throw new NotFoundException('Give Id is Invalid.')
+     throw error('Given Id is Invalid.')
     }
   }
 }
