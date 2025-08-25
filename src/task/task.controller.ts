@@ -31,7 +31,7 @@ export class TasksController {
         try {
             return this.tasksService.create(createTaskDto);
         } catch (error) {
-            throw new NotFoundException('Create Task details.')
+            throw error('Create Task details.')
         }
     }
 
