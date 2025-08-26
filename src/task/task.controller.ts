@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, ServiceUnavailableException, ValidationPipe, UseGuards, Query, ConflictException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, ValidationPipe, UseGuards, Query} from '@nestjs/common';
 import { TasksService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -28,11 +28,7 @@ export class TasksController {
     @ApiResponse({ status: 500, type: Internalservererror })
     async create(
         @Body(ValidationPipe) createTaskDto: CreateTaskDto): Promise<Tasks> {
-        try {
-            return this.tasksService.create(createTaskDto);
-        } catch (error) {
-            throw new ConflictException('Task already created.')
-        }
+        return this.tasksService.create(createTaskDto);
     }
 
 
@@ -44,11 +40,7 @@ export class TasksController {
     @ApiResponse({ status: 500, type: Internalservererror })
     @ApiBearerAuth('access-token')
     async getManyAndCount(@Query() query: TaskQuerydto): Promise<{ data: Tasks[]; total: number }> {
-        try {
-            return this.tasksService.getManyAndCount(query);
-        } catch (error) {
-            throw new NotFoundException('The task table is empty.')
-        }
+        return this.tasksService.getManyAndCount(query);
     }
 
 
@@ -60,15 +52,11 @@ export class TasksController {
     @ApiBearerAuth('access-token')
     async findOneById(
         @Param('id', ParseIntPipe) id: number): Promise<Tasks> {
-        try {
-            const task = await this.tasksService.findOneById(id);
-            if (!task) {
-                throw new NotFoundException(`task with ID ${id} not found`);
-            }
-            return task;
-        } catch (error) {
-            throw new ServiceUnavailableException('The server is unavilable.');
+        const task = await this.tasksService.findOneById(id);
+        if (!task) {
+            throw new NotFoundException(`task with ID ${id} not found`);
         }
+        return task;
     }
 
 
@@ -81,13 +69,8 @@ export class TasksController {
     @ApiBearerAuth('access-token')
     async patchTask(
         @Param('id', ParseIntPipe) id: number,
-        @Body(ValidationPipe) updateTaskDto: UpdateTaskDto,
-    ) {
-        try {
-            return this.tasksService.updateTask(id, updateTaskDto);
-        } catch (error) {
-            throw new NotFoundException('Given Id is Invalid.');
-        }
+        @Body(ValidationPipe) updateTaskDto: UpdateTaskDto,) {
+        return this.tasksService.updateTask(id, updateTaskDto);
     }
 
 
@@ -99,10 +82,6 @@ export class TasksController {
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async deleteTask(@Param('id', ParseIntPipe) id: number): Promise<void> {
-        try {
-            await this.tasksService.deleteTask(id);
-        } catch (error) {
-            throw new NotFoundException('Given Id is Invalid.');
-        }
+        await this.tasksService.deleteTask(id);
     }
 }

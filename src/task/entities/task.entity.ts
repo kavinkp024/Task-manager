@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Users } from 'src/users/entities/user.entity';
-import { Priority, Status } from '../enum/enum-task';
+import { Priority, Status } from '../../enums/enum-task';
 
 @Entity()
 export class Tasks {

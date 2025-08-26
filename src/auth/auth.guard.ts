@@ -11,7 +11,7 @@ import { Request } from 'express';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService,
-   ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
         {
           secret: process.env.YOUR_SECRET_KEY
         }
-      ); 
+      );
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException('The given token is Invalid.');

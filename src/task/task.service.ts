@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable} from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,14 +12,15 @@ export class TasksService {
     constructor(
         @InjectRepository(Tasks)
         private tasksRepository: Repository<Tasks>,
-    ) {}
+    ) { }
 
 
     //POST
     async create(createTaskDto: CreateTaskDto): Promise<Tasks> {
-        const newtask = this.tasksRepository.create(createTaskDto );
+        const newtask = this.tasksRepository.create(createTaskDto);
         return this.tasksRepository.save(newtask);
     }
+
 
     // get many
     async getManyAndCount(query: TaskQuerydto): Promise<{ data: Tasks[]; total: number, page: number, limit: number }> {
@@ -29,35 +30,37 @@ export class TasksService {
         const queryBuilder = this.tasksRepository
             .createQueryBuilder('tasks')
             .leftJoinAndSelect('tasks.user', 'user')
-            .select(['tasks.id', 'tasks.status', 'tasks.title', 'tasks.description', 'tasks.tags', 'tasks.priority', 'tasks.due_date', 'user.name', 'user.id'])
-
-        if (query.title) {
-            queryBuilder.andWhere('tasks.title LIKE :title', { title: query.title });
+            .select(['tasks.id', 'tasks.status', 'tasks.title', 'tasks.description', 'tasks.tags', 'tasks.priority', 'tasks.due_date', 'user.name', 'user.id']);
+        try {
+            if (query.title) {
+                queryBuilder.andWhere('tasks.title LIKE :title', { title: query.title });
+            }
+            if (query.status) {
+                queryBuilder.andWhere('tasks.status = :status', { status: query.status });
+            }
+            if (query.due_date) {
+                queryBuilder.andWhere('tasks.due_date = :due_date', { due_date: query.due_date });
+            }
+            if (query.priority) {
+                queryBuilder.andWhere('tasks.priority = :priority', { priority: query.priority });
+            }
+            if (query.tags) {
+                queryBuilder.andWhere('tasks.tags = :tags', { tags: query.tags });
+            }
+            if (query.userId) {
+                queryBuilder.andWhere('tasks.userId = :userId', { userId: query.userId });
+            }
+            if (query.sort_by && query.sort_order) {
+                queryBuilder.orderBy(`tasks.${query.sort_by}`, query.sort_order);
+            } else {
+                queryBuilder.orderBy('tasks.id', 'ASC');
+            }
+            queryBuilder.skip(skip).take(limit);
+            const [data, total] = await queryBuilder.getManyAndCount();
+            return { data, total, page, limit };
+        } catch (error) {
+            throw new BadRequestException("Unknown column error.");
         }
-        if (query.status) {
-            queryBuilder.andWhere('tasks.status = :status', { status: query.status });
-        }
-        if (query.due_date) {
-            queryBuilder.andWhere('tasks.due_date = :due_date', { due_date: query.due_date });
-        }
-        if (query.priority) {
-            queryBuilder.andWhere('tasks.priority = :priority', { priority: query.priority });
-        }
-        if (query.tags) {
-            queryBuilder.andWhere('tasks.tags = :tags', { tags: query.tags });
-        }
-        if (query.userId) {
-            queryBuilder.andWhere('tasks.userId = :userId', { userId: query.userId });
-        }
-        if (query.sort_by && query.sort_order) {
-            queryBuilder.orderBy(`tasks.${query.sort_by}`, query.sort_order);
-        } else {
-            queryBuilder.orderBy('tasks.id', 'ASC');
-        }
-
-        queryBuilder.skip(skip).take(limit);
-        const [data, total] = await queryBuilder.getManyAndCount();
-        return { data, total, page, limit };
     }
 
 
@@ -72,21 +75,21 @@ export class TasksService {
     //UPDATE
     async updateTask(id: number, updatetaskDto: UpdateTaskDto): Promise<Tasks> {
         const task = await this.tasksRepository.findOneBy({ id });
-
         if (!task) {
-            throw new NotFoundException(`Task with ID ${id} not found.`);
+            throw new BadRequestException(`Task with ID ${id} not found.`);
         }
-
         Object.assign(task, updatetaskDto);
-
         return this.tasksRepository.save(task);
     }
 
+
     //REMOVE
     async deleteTask(id: number): Promise<void> {
-        const result = await this.tasksRepository.delete(id);
-        if (result.affected === 0) {
-            throw new NotFoundException(`Task with ID "${id}" not found.`);
+        const result = await this.tasksRepository.findOneBy({ id });
+        if (result) {
+            await this.tasksRepository.remove(result);
+        } if (!result) {
+            throw new BadRequestException('Bad Request', 'Task Id is Invalid.');
         }
     }
 }
