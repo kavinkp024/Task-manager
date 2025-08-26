@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,7 +13,7 @@ export class UsersService {
   constructor(
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
-  ) {}
+  ) { }
 
 
   //POST
@@ -24,11 +24,6 @@ export class UsersService {
   }
 
 
-  // GET ALL 
-  async findAll(): Promise<Users[]> {
-    return this.usersRepository.find();
-  }
-
   //Get
   async getManyAndCount(query: UserQueryDto): Promise<{ data: Users[]; total: number, page: number, limit: number }> {
     const page = parseInt(query.page || '1', 10);
@@ -36,21 +31,25 @@ export class UsersService {
     const skip = (page - 1) * limit;
     const queryBuilder = this.usersRepository
       .createQueryBuilder('users')
-    if (query.name) {
-      queryBuilder.andWhere('users.name = :name', { name: query.name });
+    try {
+      if (query.name) {
+        queryBuilder.andWhere('users.name = :name', { name: query.name });
+      }
+      if (query.phone) {
+        queryBuilder.andWhere('users.phone = :phone', { phone: query.phone });
+      }
+      if (query.sortBy && query.sort_order) {
+        queryBuilder.orderBy(`users.${query.sortBy}`, query.sort_order);
+      } else {
+        queryBuilder.orderBy('users.id', 'ASC');
+      }
+      queryBuilder.skip(skip).take(limit);
+      const [data, total] = await queryBuilder.getManyAndCount();
+      return { data, total, page, limit };
+    } catch (error) {
+      console.log("error -->", error)
+      throw new BadRequestException("Unknown column error.");
     }
-    if (query.phone) {
-      queryBuilder.andWhere('users.phone = :phone', { phone: query.phone });
-    }
-    if (query.sortBy && query.sort_order) {
-      queryBuilder.orderBy(`users.${query.sortBy}`, query.sort_order);
-    } else {
-      queryBuilder.orderBy('users.id', 'ASC');
-    }
-
-    queryBuilder.skip(skip).take(limit);
-    const [data, total] = await queryBuilder.getManyAndCount();
-    return { data, total, page, limit };
   }
 
   //GET  EMAIL
@@ -64,22 +63,24 @@ export class UsersService {
   }
 
 
-
   //UPDATE
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<Users> {
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found.`);
+      throw new BadRequestException(`User with ID ${id} not found.`);
     }
     Object.assign(user, updateUserDto);
     return this.usersRepository.save(user);
+
   }
 
   //REMOVE
   async deleteUser(id: number): Promise<void> {
-    const result = await this.usersRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`User with ID "${id}" not found.`);
+    const result = await this.usersRepository.findOneBy({ id });
+    if (result) {
+      await this.usersRepository.remove(result);
+    } if (!result) {
+      throw new BadRequestException('Bad Request', 'User Id is Invalid.');
     }
   }
 }

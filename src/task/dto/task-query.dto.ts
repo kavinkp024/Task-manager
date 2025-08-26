@@ -1,6 +1,7 @@
-import { IsOptional, IsString, IsNumberString, IsInt, IsIn, IsDate } from 'class-validator';
+import { IsOptional, IsString,IsEnum, IsInt, IsIn, IsDate, IsArray } from 'class-validator';
 import { PaginationOptionsDto } from './pagination-options.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Priority, Status } from 'src/enums/enum-task';
 
 
 export class TaskQuerydto extends PaginationOptionsDto {
@@ -11,8 +12,8 @@ export class TaskQuerydto extends PaginationOptionsDto {
 
     @IsOptional()
     @ApiPropertyOptional()
-    @IsString()
-    status?: string;
+    @IsEnum(Status)
+    status?:Status;
 
     @IsOptional()
     @ApiPropertyOptional()
@@ -21,12 +22,12 @@ export class TaskQuerydto extends PaginationOptionsDto {
 
     @IsOptional()
     @ApiPropertyOptional()
-    @IsString()
-    priority?: string;
+    @IsEnum(Priority)
+    priority?:Priority;
 
     @IsOptional()
     @ApiPropertyOptional()
-    @IsString()
+    @IsArray()
     tags?: string[];
 
     @IsOptional()

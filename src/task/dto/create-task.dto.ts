@@ -1,11 +1,12 @@
-import { IsString, Length, IsInt, IsArray, IsDateString } from 'class-validator';
+import { IsString, IsEnum, IsInt, IsArray, IsDateString, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Status,Priority } from '../../enums/enum-task';
 
 
 export class CreateTaskDto {
   @IsString()
+  @IsNotEmpty()
   @ApiProperty()
-  @Length(5, 20)
   title: string;
 
   @IsString()
@@ -13,17 +14,20 @@ export class CreateTaskDto {
   description: string;
 
   @IsDateString()
-  @ApiProperty()
+  @IsNotEmpty()
+  @ApiProperty() 
   due_date: Date;
 
-  @IsString()
+  @IsEnum(Priority)
+  @IsNotEmpty()
   @ApiProperty()
-  priority: string;
+  priority:Priority;
 
 
-  @IsString()
+  @IsEnum(Status)
+  @IsNotEmpty()
   @ApiProperty()
-  status: string;
+  status:Status;
 
   @ApiProperty()
   @IsArray()

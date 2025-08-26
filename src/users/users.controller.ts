@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, Query, HttpException, HttpStatus, ValidationPipe, UseGuards, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, Query,ValidationPipe, UseGuards} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
 import { Users } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { UserQueryDto } from './dto/user-query.dto';
-import { ApiTags, ApiBody, ApiBearerAuth, ApiResponse, ApiOperation, ApiOkResponse, ApiUnauthorizedResponse, ApiExtraModels } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiBearerAuth, ApiResponse, ApiOperation} from '@nestjs/swagger';
 import { Unauthorized } from '../swagger/unauth.response';
 import { Forbidden } from '../swagger/forbidden';
 import { NotFound } from '../swagger/notfound';
@@ -15,11 +15,11 @@ import { UsersResponse } from '../swagger/succes-response-user';
 import { UserList } from '../swagger/userlist-response';
 
 @ApiTags('Users')
-@Controller('users') 
+@Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
- 
+
   @Post()
   @ApiBody({ type: CreateUserDto })
   @ApiOperation({ summary: 'Create user' })
@@ -27,23 +27,20 @@ export class UsersController {
   @ApiResponse({ status: 400, type: BadRequest })
   @ApiResponse({ status: 500, type: Internalservererror })
   async create(
-    @Body(new ValidationPipe({ transform: true })) createUserDto: CreateUserDto): Promise<Users> {
-    try {
-      return this.usersService.create(createUserDto);
-    }catch (error) {
-     throw new NotFoundException('fill all user information.')
-    }
+    @Body() createUserDto: CreateUserDto): Promise<Users> {
+    return this.usersService.create(createUserDto);
   }
+
 
   @Get()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get Users ' })
-  @ApiResponse({ status: 200, type:UsersResponse })
+  @ApiResponse({ status: 200, type: UsersResponse })
   @ApiResponse({ status: 401, type: Unauthorized })
   @ApiResponse({ status: 500, type: Internalservererror })
   @ApiBearerAuth('access-token')
   async findAll(
-    @Query() query: UpdateUserDto): Promise<{ data: Users[] }> {
+    @Query() query: UserQueryDto): Promise<{ data: Users[] }> {
     return this.usersService.getManyAndCount(query);
   }
 
@@ -56,15 +53,11 @@ export class UsersController {
   @ApiBearerAuth('access-token')
   async findOneById(
     @Param('id', ParseIntPipe) id: number): Promise<Users> {
-    try {
       const user = await this.usersService.findOneById(id);
       if (!user) {
         throw new NotFoundException(`User with ID ${id} not found`);
       }
       return user;
-    } catch (error) {
-     throw new NotFoundException('Give some Valid user Id.')
-    }
   }
 
 
@@ -72,18 +65,14 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'user update' })
   @ApiResponse({ status: 200, type: UserList })
-  @ApiResponse({ status: 404, type: NotFound})
+  @ApiResponse({ status: 404, type: NotFound })
   @ApiResponse({ status: 401, type: Unauthorized })
   @ApiBearerAuth('access-token')
   async patchUser(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    try {
-      return this.usersService.updateUser(id, updateUserDto);
-    } catch (error) {
-     throw new NotFoundException('The given user Id is Invalid.')
-    }
+    @Body(ValidationPipe) updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(id, updateUserDto);
+      
   }
 
 
@@ -96,10 +85,6 @@ export class UsersController {
   @ApiBearerAuth('access-token')
   async deleteUser(
     @Param('id', ParseIntPipe) id: number): Promise<void> {
-    try {
-      await this.usersService.deleteUser(id);
-    } catch (error) {
-     throw new NotFoundException('Give Id is Invalid.')
-    }
+    await this.usersService.deleteUser(id);
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, HttpException, HttpStatus, ValidationPipe, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, ValidationPipe, UseGuards, Query} from '@nestjs/common';
 import { TasksService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -17,7 +17,7 @@ import { TaskList } from 'src/swagger/tasklist-response';
 @ApiTags('Tasks')
 @Controller('tasks')
 export class TasksController {
-    constructor(private readonly tasksService: TasksService) {}
+    constructor(private readonly tasksService: TasksService) { }
 
 
     @Post()
@@ -27,17 +27,8 @@ export class TasksController {
     @ApiResponse({ status: 400, type: BadRequest })
     @ApiResponse({ status: 500, type: Internalservererror })
     async create(
-        @Body(new ValidationPipe()) createTaskDto: CreateTaskDto): Promise<Tasks> {
-        try {
-            return this.tasksService.create(createTaskDto);
-        } catch (error) {
-             throw new HttpException({
-                status: HttpStatus.FORBIDDEN,
-                error: 'This is a custom message',
-            }, HttpStatus.FORBIDDEN, {
-                cause: error
-            });
-        }
+        @Body(ValidationPipe) createTaskDto: CreateTaskDto): Promise<Tasks> {
+        return this.tasksService.create(createTaskDto);
     }
 
 
@@ -61,20 +52,11 @@ export class TasksController {
     @ApiBearerAuth('access-token')
     async findOneById(
         @Param('id', ParseIntPipe) id: number): Promise<Tasks> {
-        try {
-            const task = await this.tasksService.findOneById(id);
-            if (!task) {
-                throw new NotFoundException(`task with ID ${id} not found`);
-            }
-            return task;
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.NOT_FOUND,
-                error: 'The expected ID is not find in database.',
-            }, HttpStatus.FORBIDDEN, {
-                cause: error
-            });
+        const task = await this.tasksService.findOneById(id);
+        if (!task) {
+            throw new NotFoundException(`task with ID ${id} not found`);
         }
+        return task;
     }
 
 
@@ -82,23 +64,13 @@ export class TasksController {
     @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Task update' })
     @ApiResponse({ status: 200, type: TaskList })
-    @ApiResponse({ status: 404, type: NotFound})
+    @ApiResponse({ status: 404, type: NotFound })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async patchTask(
         @Param('id', ParseIntPipe) id: number,
-        @Body() updateTaskDto: UpdateTaskDto,
-    ) {
-        try {
-            return this.tasksService.updateTask(id, updateTaskDto);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.FORBIDDEN,
-                error: 'This is a custom message.',
-            }, HttpStatus.FORBIDDEN, {
-                cause: error
-            });
-        }
+        @Body(ValidationPipe) updateTaskDto: UpdateTaskDto,) {
+        return this.tasksService.updateTask(id, updateTaskDto);
     }
 
 
@@ -110,15 +82,6 @@ export class TasksController {
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async deleteTask(@Param('id', ParseIntPipe) id: number): Promise<void> {
-        try {
-            await this.tasksService.deleteTask(id);
-        } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.FORBIDDEN,
-                error: 'This is a custom message',
-            }, HttpStatus.FORBIDDEN, {
-                cause: error
-            });
-        }
+        await this.tasksService.deleteTask(id);
     }
 }
