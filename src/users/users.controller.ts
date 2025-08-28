@@ -7,10 +7,8 @@ import { AuthGuard } from '../auth/auth.guard';
 import { UserQueryDto } from './dto/user-query.dto';
 import { ApiTags, ApiBody, ApiBearerAuth, ApiResponse, ApiOperation} from '@nestjs/swagger';
 import { Unauthorized } from '../swagger/unauth.response';
-import { Forbidden } from '../swagger/forbidden';
-import { NotFound } from '../swagger/notfound';
+import { NotFound } from '../swagger/not-found';
 import { BadRequest } from '../swagger/bad.request';
-import { Internalservererror } from '../swagger/internal-server-error';
 import { UsersResponse } from '../swagger/succes-response-user';
 import { UserList } from '../swagger/userlist-response';
 
@@ -24,8 +22,6 @@ export class UsersController {
   @ApiBody({ type: CreateUserDto })
   @ApiOperation({ summary: 'Create user' })
   @ApiResponse({ status: 201, type: UserList })
-  @ApiResponse({ status: 400, type: BadRequest })
-  @ApiResponse({ status: 500, type: Internalservererror })
   async create(
     @Body() createUserDto: CreateUserDto): Promise<Users> {
     return this.usersService.create(createUserDto);
@@ -37,7 +33,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Get Users ' })
   @ApiResponse({ status: 200, type: UsersResponse })
   @ApiResponse({ status: 401, type: Unauthorized })
-  @ApiResponse({ status: 500, type: Internalservererror })
   @ApiBearerAuth('access-token')
   async findAll(
     @Query() query: UserQueryDto): Promise<{ data: Users[] }> {
@@ -50,6 +45,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({ status: 200, type: UserList })
   @ApiResponse({ status: 401, type: Unauthorized })
+  @ApiResponse({ status: 404, type: NotFound })
   @ApiBearerAuth('access-token')
   async findOneById(
     @Param('id', ParseIntPipe) id: number): Promise<Users> {
@@ -70,7 +66,7 @@ export class UsersController {
   @ApiBearerAuth('access-token')
   async patchUser(
     @Param('id', ParseIntPipe) id: number,
-    @Body(ValidationPipe) updateUserDto: UpdateUserDto) {
+    @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser(id, updateUserDto);
       
   }
@@ -79,8 +75,8 @@ export class UsersController {
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'user delete' })
-  @ApiResponse({ status: 200 })
-  @ApiResponse({ status: 403, type: Forbidden })
+  @ApiResponse({ status: 200,description: 'User successfully deleted.'})
+  @ApiResponse({ status: 400, type: BadRequest })
   @ApiResponse({ status: 401, type: Unauthorized })
   @ApiBearerAuth('access-token')
   async deleteUser(

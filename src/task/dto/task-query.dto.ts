@@ -1,10 +1,10 @@
 import { IsOptional, IsString,IsEnum, IsInt, IsIn, IsDate, IsArray } from 'class-validator';
-import { PaginationOptionsDto } from './pagination-options.dto';
+import { PaginationTaskDto } from '../../pagination/pagination-task.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Priority, Status } from 'src/enums/enum-task';
 
 
-export class TaskQuerydto extends PaginationOptionsDto {
+export class TaskQuerydto extends PaginationTaskDto {
     @IsOptional()
     @ApiPropertyOptional()
     @IsString()
@@ -38,7 +38,7 @@ export class TaskQuerydto extends PaginationOptionsDto {
     @IsOptional()
     @ApiPropertyOptional()
     @IsString()
-    @IsIn(['due_date', 'priority'])
+    @IsIn(['status', 'priority','title'])
     sort_by?: string;
 
     @IsOptional()

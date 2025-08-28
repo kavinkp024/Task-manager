@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class BadRequest {
-  @ApiProperty({ example: 'Expected double-quoted property name in JSON at position.' })
+  @ApiProperty({ example: 'Bad Request' })
   message: string;
 
-  @ApiProperty({ example: 'Bad Request' })
+  @ApiProperty({ example: 'The Id is Invalid.' })
   error: string;
 
   @ApiProperty({ example: 400 })

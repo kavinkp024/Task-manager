@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, ValidationPipe, UseGuards, Query} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
 import { TasksService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -6,12 +6,10 @@ import { Tasks } from './entities/task.entity';
 import { TaskQuerydto } from './dto/task-query.dto'
 import { AuthGuard } from '../auth/auth.guard';
 import { ApiTags, ApiBody, ApiBearerAuth, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Forbidden } from '../swagger/forbidden';
 import { BadRequest } from '../swagger/bad.request';
 import { TaskResponse } from '../swagger/success.response.task';
 import { Unauthorized } from '../swagger/unauth.response';
-import { NotFound } from '../swagger/notfound';
-import { Internalservererror } from '../swagger/internal-server-error';
+import { NotFound } from '../swagger/not-found';
 import { TaskList } from 'src/swagger/tasklist-response';
 
 @ApiTags('Tasks')
@@ -25,9 +23,8 @@ export class TasksController {
     @ApiOperation({ summary: 'Create Task' })
     @ApiResponse({ status: 201, type: TaskList })
     @ApiResponse({ status: 400, type: BadRequest })
-    @ApiResponse({ status: 500, type: Internalservererror })
     async create(
-        @Body(ValidationPipe) createTaskDto: CreateTaskDto): Promise<Tasks> {
+        @Body() createTaskDto: CreateTaskDto): Promise<Tasks> {
         return this.tasksService.create(createTaskDto);
     }
 
@@ -37,7 +34,6 @@ export class TasksController {
     @ApiOperation({ summary: 'Get Tasks ' })
     @ApiResponse({ status: 200, type: TaskResponse })
     @ApiResponse({ status: 401, type: Unauthorized })
-    @ApiResponse({ status: 500, type: Internalservererror })
     @ApiBearerAuth('access-token')
     async getManyAndCount(@Query() query: TaskQuerydto): Promise<{ data: Tasks[]; total: number }> {
         return this.tasksService.getManyAndCount(query);
@@ -49,6 +45,7 @@ export class TasksController {
     @ApiOperation({ summary: 'Get Task by ID' })
     @ApiResponse({ status: 200, type: TaskList })
     @ApiResponse({ status: 401, type: Unauthorized })
+    @ApiResponse({ status: 404, type: NotFound })
     @ApiBearerAuth('access-token')
     async findOneById(
         @Param('id', ParseIntPipe) id: number): Promise<Tasks> {
@@ -59,7 +56,6 @@ export class TasksController {
         return task;
     }
 
-
     @Patch(':id')
     @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Task update' })
@@ -68,8 +64,8 @@ export class TasksController {
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async patchTask(
-        @Param('id', ParseIntPipe) id: number,
-        @Body(ValidationPipe) updateTaskDto: UpdateTaskDto,) {
+        @Param('id') id: number,
+        @Body() updateTaskDto: UpdateTaskDto,) {
         return this.tasksService.updateTask(id, updateTaskDto);
     }
 
@@ -77,8 +73,8 @@ export class TasksController {
     @Delete(':id')
     @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Task delete' })
-    @ApiResponse({ status: 200 })
-    @ApiResponse({ status: 403, type: Forbidden })
+    @ApiResponse({ status: 200, description: 'Task successfully deleted.' })
+    @ApiResponse({ status: 400, type: BadRequest })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async deleteTask(@Param('id', ParseIntPipe) id: number): Promise<void> {

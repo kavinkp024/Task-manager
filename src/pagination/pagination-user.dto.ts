@@ -1,8 +1,8 @@
-import { IsOptional, IsNumberString, IsString, Min } from 'class-validator';
+import { IsOptional, IsNumberString } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 
-export class PaginationuserDto {
+export class PaginationUserDto {
   @IsOptional()
   @ApiPropertyOptional()
   @IsNumberString()
