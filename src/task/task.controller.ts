@@ -10,7 +10,7 @@ import { BadRequest } from '../swagger/bad.request';
 import { TaskResponse } from '../swagger/success.response.task';
 import { Unauthorized } from '../swagger/unauth.response';
 import { NotFound } from '../swagger/not-found';
-import { TaskList } from 'src/swagger/tasklist-response';
+import { TaskList, TaskDelete, TaskCreate } from 'src/swagger/tasklist-response';
 
 @ApiTags('Tasks')
 @Controller('tasks')
@@ -20,18 +20,18 @@ export class TasksController {
 
     @Post()
     @ApiBody({ type: CreateTaskDto })
-    @ApiOperation({ summary: 'Create Task' })
-    @ApiResponse({ status: 201, type: TaskList })
-    @ApiResponse({ status: 400, type: BadRequest })
+    @ApiOperation({ summary:'Add a new task for user'})
+    @ApiResponse({ status: 201, type: TaskCreate })
     async create(
-        @Body() createTaskDto: CreateTaskDto): Promise<Tasks> {
-        return this.tasksService.create(createTaskDto);
+        @Body() createTaskDto: CreateTaskDto): Promise<{ message: string }> {
+        await this.tasksService.create(createTaskDto);
+        return { message: 'Task created succesfully.' };
     }
 
 
     @Get()
     @UseGuards(AuthGuard)
-    @ApiOperation({ summary: 'Get Tasks ' })
+    @ApiOperation({ summary: 'Find tasks'})
     @ApiResponse({ status: 200, type: TaskResponse })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
@@ -42,7 +42,7 @@ export class TasksController {
 
     @Get(':id')
     @UseGuards(AuthGuard)
-    @ApiOperation({ summary: 'Get Task by ID' })
+    @ApiOperation({ summary: 'Find task by ID' })
     @ApiResponse({ status: 200, type: TaskList })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiResponse({ status: 404, type: NotFound })
@@ -58,26 +58,37 @@ export class TasksController {
 
     @Patch(':id')
     @UseGuards(AuthGuard)
-    @ApiOperation({ summary: 'Task update' })
+    @ApiOperation({ summary: 'update task by ID' })
     @ApiResponse({ status: 200, type: TaskList })
     @ApiResponse({ status: 404, type: NotFound })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
     async patchTask(
         @Param('id') id: number,
-        @Body() updateTaskDto: UpdateTaskDto,) {
+        @Body() updateTaskDto: UpdateTaskDto,): Promise<Tasks> {
         return this.tasksService.updateTask(id, updateTaskDto);
     }
 
 
     @Delete(':id')
     @UseGuards(AuthGuard)
-    @ApiOperation({ summary: 'Task delete' })
-    @ApiResponse({ status: 200, description: 'Task successfully deleted.' })
+    @ApiOperation({ summary: 'Delete completed task by ID' })
+    @ApiResponse({ status: 200, type: TaskDelete })
     @ApiResponse({ status: 400, type: BadRequest })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')
-    async deleteTask(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    async deleteTask(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
         await this.tasksService.deleteTask(id);
+        return { message: 'Task deleted successfully.' };
     }
 }
+
+// http://localhost:3000/user?name=kavin
+// http= schema,
+//localhost= domain name,
+// 3000 = port value,
+//user = path of the file,
+// ? = query,
+//name = key,
+// 'name=kavin (&) password=hjgdkjHJ' = paramether,
+// ## = fragments it appears at the last.
