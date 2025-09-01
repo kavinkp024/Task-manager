@@ -82,13 +82,3 @@ export class TasksController {
         return { message: 'Task deleted successfully.' };
     }
 }
-
-// http://localhost:3000/user?name=kavin
-// http= schema,
-//localhost= domain name,
-// 3000 = port value,
-//user = path of the file,
-// ? = query,
-//name = key,
-// 'name=kavin (&) password=hjgdkjHJ' = paramether,
-// ## = fragments it appears at the last.
