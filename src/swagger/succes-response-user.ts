@@ -1,4 +1,4 @@
-import { MetaDto } from '../pagination/pagination-response';
+import { MetaDto } from './pagination-response';
 import { UserList } from '../swagger/userlist-response';
 import { ApiProperty } from '@nestjs/swagger';
 

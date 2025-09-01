@@ -24,4 +24,13 @@ export class UserList {
 }
 
 
+export class UserCreate {
+        @ApiProperty({example:'User created succesfully.'})
+        message:string;
+}
 
+
+export class UserDelete {
+        @ApiProperty({example:'User deleted succesfully.'})
+        message:string;
+}

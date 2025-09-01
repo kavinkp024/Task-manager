@@ -33,3 +33,13 @@ export class TaskList {
       updated_at: Date;
 }
 
+export class TaskCreate {
+        @ApiProperty({example:'Task created succesfully.'})
+        message:string;
+}
+
+
+export class TaskDelete {
+        @ApiProperty({example:'Task deleted succesfully.'})
+        message:string;
+}

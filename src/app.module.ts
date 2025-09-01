@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config'; 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { UsersController } from './users/users.controller';
@@ -13,7 +13,7 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true,
+    ConfigModule.forRoot({ isGlobal: true, 
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -25,17 +25,17 @@ import { AppService } from './app.service';
       database: 'project',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-    }),
+    }),                     
     UsersModule,
     TasksModule,
     AuthModule,
-    JwtModule
+    JwtModule              
   ],
-  controllers: [UsersController,TasksController,AppController],
-  providers: [AppService],
+  controllers: [UsersController,TasksController,AppController],  
+  providers: [AppService],    
 })
 
-export class AppModule {}
+export class AppModule {}      
 
  
  

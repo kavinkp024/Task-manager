@@ -1,6 +1,6 @@
 import { TaskList } from './tasklist-response';
 import { ApiProperty } from '@nestjs/swagger';
-import { MetaDto } from 'src/pagination/pagination-response';
+import { MetaDto } from 'src/swagger/pagination-response';
 
 export class TaskResponse {
     @ApiProperty({
