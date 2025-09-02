@@ -1,44 +1,32 @@
-import { IsOptional, IsString,IsEnum, IsInt, IsIn, IsDate, IsArray } from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsInt, IsIn, IsDate, IsArray, IsNumberString } from 'class-validator';
 import { PaginationTaskDto } from '../../pagination/pagination-task.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Priority, Status } from 'src/enums/enum-task';
-
+import { Transform,Type } from 'class-transformer';
 
 export class TaskQuerydto extends PaginationTaskDto {
     @IsOptional()
     @ApiPropertyOptional()
-    @IsString()
-    title?: string;
-
-    @IsOptional()
-    @ApiPropertyOptional()
     @IsEnum(Status)
-    status?:Status;
+    status?: Status;
 
     @IsOptional()
     @ApiPropertyOptional()
+    @ Type(() => Date)
     @IsDate()
     due_date?: Date;
 
     @IsOptional()
     @ApiPropertyOptional()
-    @IsEnum(Priority)
-    priority?:Priority;
-
-    @IsOptional()
-    @ApiPropertyOptional()
     @IsArray()
+    @IsString({ each: true })
+    @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
     tags?: string[];
 
     @IsOptional()
     @ApiPropertyOptional()
-    @IsInt()
-    userId?: number;
-
-    @IsOptional()
-    @ApiPropertyOptional()
     @IsString()
-    @IsIn(['status', 'priority','title'])
+    @IsIn(['priority', 'due_date'])
     sort_by?: string;
 
     @IsOptional()

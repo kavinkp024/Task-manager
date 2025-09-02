@@ -27,9 +27,9 @@ export class UserQueryDto extends PaginationUserDto {
     @IsOptional()
     @ApiPropertyOptional()
     @IsString()
-    @IsIn(['name','email','id'])
+    @IsIn(['name','email'])
     sortBy?: string;
-
+ 
     @IsOptional()
     @ApiPropertyOptional()
     @IsString()

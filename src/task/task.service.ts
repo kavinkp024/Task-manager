@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,7 +20,7 @@ export class TasksService {
         const newtask = this.tasksRepository.create(createTaskDto);
         return this.tasksRepository.save(newtask);
     }
-    
+
 
     // get many
     async getManyAndCount(query: TaskQuerydto): Promise<{ data: Tasks[]; total: number, page: number, limit: number }> {
@@ -32,23 +32,14 @@ export class TasksService {
             .leftJoinAndSelect('tasks.user', 'user')
             .select(['tasks.id', 'tasks.status', 'tasks.title', 'tasks.description', 'tasks.tags', 'tasks.priority', 'tasks.due_date', 'user.name', 'user.id']);
         try {
-            if (query.title) {
-                queryBuilder.andWhere('tasks.title LIKE :title', { title: query.title });
-            }
             if (query.status) {
                 queryBuilder.andWhere('tasks.status = :status', { status: query.status });
             }
             if (query.due_date) {
                 queryBuilder.andWhere('tasks.due_date = :due_date', { due_date: query.due_date });
             }
-            if (query.priority) {
-                queryBuilder.andWhere('tasks.priority = :priority', { priority: query.priority });
-            }
             if (query.tags) {
                 queryBuilder.andWhere('tasks.tags = :tags', { tags: query.tags });
-            }
-            if (query.userId) {
-                queryBuilder.andWhere('tasks.userId = :userId', { userId: query.userId });
             }
             if (query.sort_by && query.sort_order) {
                 queryBuilder.orderBy(`tasks.${query.sort_by}`, query.sort_order);
@@ -75,7 +66,7 @@ export class TasksService {
     //UPDATE
     async updateTask(id: number, updatetaskDto: UpdateTaskDto): Promise<Tasks> {
         const task = await this.tasksRepository.findOneBy({ id });
-        console.log("task",task)
+        console.log("task", task)
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found.`);
         }
