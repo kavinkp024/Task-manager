@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, UseGuards, Query, BadRequestException } from '@nestjs/common';
 import { TasksService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -20,18 +20,22 @@ export class TasksController {
 
     @Post()
     @ApiBody({ type: CreateTaskDto })
-    @ApiOperation({ summary:'Add a new task for user'})
+    @ApiOperation({ summary: 'Add a new task for user' })
     @ApiResponse({ status: 201, type: TaskCreate })
     async create(
         @Body() createTaskDto: CreateTaskDto): Promise<{ message: string }> {
-        await this.tasksService.create(createTaskDto);
-        return { message: 'Task created succesfully.' };
+        try {
+            await this.tasksService.create(createTaskDto);
+            return { message: 'Task created succesfully.' };
+        } catch (error) {
+            throw new NotFoundException('Forign Key userId Invalid.');
+        }
     }
 
 
     @Get()
     @UseGuards(AuthGuard)
-    @ApiOperation({ summary: 'Find tasks'})
+    @ApiOperation({ summary: 'Find tasks' })
     @ApiResponse({ status: 200, type: TaskResponse })
     @ApiResponse({ status: 401, type: Unauthorized })
     @ApiBearerAuth('access-token')

@@ -12,7 +12,7 @@ export class CreateUserDto {
   @ApiProperty()
   password: string;
 
-  @IsEmail() 
+  @IsEmail()
   @IsNotEmpty()
   @ApiProperty()
   email: string;

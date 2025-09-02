@@ -4,7 +4,6 @@ import { Users } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { JwtService } from '@nestjs/jwt';
-import { Tasks } from 'src/task/entities/task.entity';
 
 
 @Module({
@@ -13,4 +12,4 @@ import { Tasks } from 'src/task/entities/task.entity';
   providers: [UsersService, JwtService],
   exports: [UsersService],
 })
-export class UsersModule {} 
+export class UsersModule { } 

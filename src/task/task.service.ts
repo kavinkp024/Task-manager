@@ -66,12 +66,16 @@ export class TasksService {
     //UPDATE
     async updateTask(id: number, updatetaskDto: UpdateTaskDto): Promise<Tasks> {
         const task = await this.tasksRepository.findOneBy({ id });
-        console.log("task", task)
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found.`);
         }
-        Object.assign(task, updatetaskDto);
-        return this.tasksRepository.save(task);
+        try {
+            Object.assign(task, updatetaskDto);
+            const update = await this.tasksRepository.save(task);
+            return update
+        } catch (error) {
+            throw new BadRequestException('Forign Key userId Invalid.');
+        }
     }
 
 
