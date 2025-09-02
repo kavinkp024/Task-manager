@@ -24,13 +24,7 @@ export class TaskList {
       tags: string[];
 
       @ApiProperty({ example: List })
-      userId: List;
-
-      @ApiProperty({ example: 'date' })
-      created_at: Date;
-
-      @ApiProperty({ example: 'date' })
-      updated_at: Date;
+      user: List;
 }
 
 export class TaskCreate {
