@@ -12,4 +12,4 @@ import { JwtService } from '@nestjs/jwt';
   providers: [TasksService, JwtService],
   exports: [TasksService],
 })
-export class TasksModule {}
+export class TasksModule { }

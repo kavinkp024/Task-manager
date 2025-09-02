@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, BeforeUpdate, CreateDateColumn,OneToMany, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BeforeUpdate, CreateDateColumn, OneToMany, UpdateDateColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Tasks } from 'src/task/entities/task.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -37,6 +37,6 @@ export class Users {
   @OneToMany(() => Tasks, task => task.user)
   tasks: Tasks;
 
-}    
+}
 
 

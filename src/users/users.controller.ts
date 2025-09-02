@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
-import { UsersService } from './users.service'; 
+import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
 import { Users } from './entities/user.entity';
@@ -10,10 +10,10 @@ import { Unauthorized } from '../swagger/unauth.response';
 import { NotFound } from '../swagger/not-found';
 import { BadRequest } from '../swagger/bad.request';
 import { UsersResponse } from '../swagger/succes-response-user';
-import { UserList,UserCreate,UserDelete} from '../swagger/userlist-response';
+import { UserList, UserCreate, UserDelete } from '../swagger/userlist-response';
 
 @ApiTags('Users')
-@Controller('users') 
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
@@ -21,7 +21,7 @@ export class UsersController {
   @Post()
   @ApiBody({ type: CreateUserDto })
   @ApiOperation({ summary: 'Create user' })
-  @ApiResponse({ status: 201,type:UserCreate })
+  @ApiResponse({ status: 201, type: UserCreate })
   async create(
     @Body() createUserDto: CreateUserDto): Promise<{ message: string }> {
     await this.usersService.create(createUserDto);
@@ -76,13 +76,13 @@ export class UsersController {
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Delete user by ID' })
-  @ApiResponse({ status: 200,type:UserDelete })
+  @ApiResponse({ status: 200, type: UserDelete })
   @ApiResponse({ status: 400, type: BadRequest })
   @ApiResponse({ status: 401, type: Unauthorized })
   @ApiBearerAuth('access-token')
   async deleteUser(
-    @Param('id', ParseIntPipe) id: number): Promise<{message:string}> {
+    @Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
     await this.usersService.deleteUser(id);
-    return {message:'User deleted successfully.'}
+    return { message: 'User deleted successfully.' }
   }
 }
