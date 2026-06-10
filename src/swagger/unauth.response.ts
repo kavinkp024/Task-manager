@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class taskUnauthorizedResponse {
+export class Unauthorized {
   @ApiProperty({ example: 'Unauthorized' })
   message: string;
 

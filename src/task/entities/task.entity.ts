@@ -1,8 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Status } from '../dto/status.enum';
 import { Users } from 'src/users/entities/user.entity';
-
+import { Priority, Status } from '../../enums/enum-task';
 
 @Entity()
 export class Tasks {
@@ -22,16 +21,19 @@ export class Tasks {
   @ApiProperty()
   due_date: Date;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: Priority
+  })
   @ApiProperty()
-  priority: string;
+  priority: Priority;
 
   @Column({
     type: 'enum',
-    enum: Status,
+    enum: Status
   })
   @ApiProperty()
-  status: string;
+  status: Status;
 
   @Column('simple-array')
   @ApiProperty()
@@ -56,35 +58,3 @@ export class Tasks {
 }
 
 
-export class tasksucess {
-    @ApiProperty({ example: "number" })
-    id: number;
-
-    @ApiProperty()
-    title: string;
-
-    @ApiProperty()
-    description: string;
-
-    @ApiProperty()
-    due_date: Date;
-
-    @ApiProperty()
-    priority: string;
-
-    @ApiProperty()
-    status: string;
-
-    @ApiProperty()
-    tags: string[];
-
-    @ApiProperty({ example: "number" })
-    userId: string;
-
-    @ApiProperty({ example: 'date' })
-    created_at: Date;
-
-    @ApiProperty({ example: 'date' })
-    updated_at: Date;
-
-}

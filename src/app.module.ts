@@ -7,11 +7,15 @@ import { TasksModule } from './task/task.module';
 import { TasksController } from './task/task.controller';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       driver: require('mysql2'),
@@ -19,7 +23,7 @@ import { JwtModule } from '@nestjs/jwt';
       port: 3306,
       username: 'root',
       password: '12345',
-      database: 'project',
+      database: 'test',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
@@ -28,7 +32,10 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
     JwtModule
   ],
-  controllers: [UsersController,TasksController],
-  providers: [],
+  controllers: [UsersController, TasksController, AppController],
+  providers: [AppService],
 })
-export class AppModule {}
+
+export class AppModule { }
+
+
